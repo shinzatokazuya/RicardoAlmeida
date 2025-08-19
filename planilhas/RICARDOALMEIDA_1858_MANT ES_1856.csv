@@ -1,4 +1,4 @@
-Empresa;Data;Situaçãoo;Usuário;Nome;Solicitação;Nr. Nf;Vl. Customedio;Sku;Descrição;Dt. Preventrega;Pedido;Ds. Obs Cmc;Ds. Prioridade;Ds. Departamento;Ds. Compra;Ds. Motivo;Qt. Cancelada;Qt. Solicitada Solicitação;Qt. Solicitada Pedido;Vl.Solicitação;Cod. Ccusto
+Empresa;Data;Situação;Usuário;Nome;Solicitação;Nr. Nf;Vl. Customedio;Sku;Descrição;Dt. Preventrega;Pedido;Ds. Obs Cmc;Ds. Prioridade;Ds. Departamento;Ds. Compra;Ds. Motivo;Qt. Cancelada;Qt. Solicitada Solicitação;Qt. Solicitada Pedido;Vl.Solicitação;Cod. Ccusto
 9;03/08/2023;APROVADA;1856;MANT LETICIA DE FREITAS LEAL;1801;;R$ 316,00;2105;TOMADOS MONITORAMENTO UNI U;08/08/2023;15834;NF 62476 - VENCIMENTO 10/08/2023;ALTA;FACILITIES;;;;1;1;316;FACILITIES
 10;03/08/2023;APROVADA;1856;MANT LETICIA DE FREITAS LEAL;1807;;R$ 2.376,00;623;TOMADOS MANUTENCAO PREDIAL UNI U;08/08/2023;15837;NF 262 - VENCIMENTO 10/08/2023;ALTA;FACILITIES;;;;1;1;2376;FACILITIES
 22;05/08/2023;APROVADA;1856;MANT LETICIA DE FREITAS LEAL;1832;;R$ 707,00;623;TOMADOS MANUTENCAO PREDIAL UNI U;07/08/2023;15827;NF 7932  - VENCIMENTO 21/08/2023;MEDIA;FACILITIES;;;;1;1;707;FACILITIES

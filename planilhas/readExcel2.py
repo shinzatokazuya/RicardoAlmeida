@@ -3,9 +3,9 @@ import pandas as pd
 try:
     # 1. Carregar os arquivos CSV com o delimitador ';'
     df_servicos = pd.read_csv('planilhas/Serviços-18-08-2025(SOLIC_SERVIÇO).csv', delimiter=';')
-    df_ricardo = pd.read_csv('planilhas/RICARDOALMEIDA_1858_MANT ES_1856.csv', delimiter=';')
+    df_ricardo = pd.read_csv('planilhas/RICARDOALMEIDA_1858_MANT ES_1853.csv', delimiter=';')
 
-    # 2. Consolidar o arquivo RICARDOALMEIDA_1858_MANT ES_1856.csv
+    # 2. Consolidar o arquivo RICARDOALMEIDA_1858_MANT ES_1853.csv
     # Agrupar pela coluna 'Solicitação' e somar 'Vl. Customedio'
     # Para as outras colunas, vamos pegar o primeiro valor de cada grupo.
     # É importante ter certeza que 'Empresa' e 'Data' são consistentes para a mesma solicitação.
@@ -56,10 +56,10 @@ try:
     df_final = df_final[colunas_finais]
 
     # 5. Salvar o resultado em um novo arquivo CSV.
-    df_final.to_csv('Analise_Final_Servicos_1856_2.csv', index=False, sep=';')
+    df_final.to_csv('Analise_Final_Servicos_1853.csv', index=False, sep=';')
 
     print("Processo concluído com sucesso!")
-    print("O resultado foi salvo no arquivo 'Analise_Final_Servicos_1856_2.csv'.")
+    print("O resultado foi salvo no arquivo 'Analise_Final_Servicos_1853.csv'.")
 
 except FileNotFoundError:
     print("Erro: Verifique se os nomes dos arquivos estão corretos e se estão na mesma pasta do script.")

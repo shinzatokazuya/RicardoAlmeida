@@ -1,4 +1,4 @@
-Filial ;Nome Filial;Tipo ;Serviço ;Razão Social;Contato ;CNPJ;NF ;Valor ;Solicitação;Data da Requisição;Natureza da Solicitação ;Peças R$;Peça NF;Data de Emissão;Data do Pagamento;;;;;;
+Filial;Nome Filial;Tipo;Serviço;Razão Social;Contato;CNPJ;NF;Valor;Solicitação;Data da Requisição;Natureza da Solicitação;Peças R$;Peça NF;Data de Emissão;Data do Pagamento;;;;;;
 1; F�brica;PREVENTIVO;ELEVADORES;IN PLACE ELEVADORES;(11) 99400-8734;;270;R$ 250,00;1781;;SERVI�O;;;;;;;;;;
 29; Galp�o 116;PREVENTIVO;ELEVADORES;IN PLACE ELEVADORES;(11) 99400-8734;;271;R$ 250,00;1783;;SERVI�O;;;;;;;;;;
 25; Belvedere;CORRETIVO;JARDINAGEM;428 - CASA DO JARDIM;31 36434375;;428;R$ 5.085,00;1792;;;;;;;;;;;;

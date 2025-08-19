@@ -5,7 +5,7 @@ import calendar
 from collections import Counter
 
 # Caminho para o arquivo Excel
-file_path = 'controle-agua-gas-energia/controle-494/controle-agua/Planilha-agua (version 1).xlsx'
+file_path = 'controle-agua-gas-energia/controle-494/controle-agua/planilhas/Planilha-agua (version 1).xlsx'
 
 try:
     # --- Passo 1: Ler as linhas do cabeçalho separadamente ---
@@ -177,7 +177,7 @@ try:
         plt.grid(True, linestyle='--', alpha=0.6)
         plt.tight_layout()
         output_image_path_total = 'grafico_consumo_mensal_total_agua_2025.png'
-        plt.savefig('controle-agua-gas-energia/controle-494/controle-agua/' + output_image_path_total)
+        plt.savefig('controle-agua-gas-energia/controle-494/controle-agua/graficos' + output_image_path_total)
         print(f"\nGráfico total de água salvo como: {output_image_path_total}") # Esta linha permanecerá
         plt.show(block=False) # Usar block=False para não pausar a execução se rodar em ambiente interativo
     else:
@@ -206,7 +206,7 @@ try:
 
                 plt.tight_layout()
                 output_image_path_setor = f'grafico_consumo_mensal_agua_{setor_nome.replace(" ", "_")}_2025.png'
-                plt.savefig('controle-agua-gas-energia/controle-494/controle-agua/' + output_image_path_setor)
+                plt.savefig('controle-agua-gas-energia/controle-494/controle-agua/graficos' + output_image_path_setor)
                 print(f"Gráfico do setor '{setor_nome}' de água salvo como: {output_image_path_setor}") # Esta linha permanecerá
                 plt.show(block=False) # Usar block=False para não pausar a execução se rodar em ambiente interativo
             else:

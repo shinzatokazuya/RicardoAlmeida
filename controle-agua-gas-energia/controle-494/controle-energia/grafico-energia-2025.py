@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import calendar # Para obter os nomes dos meses
 
 # Caminho para o arquivo Excel
-file_path = 'controle-agua-gas-energia/controle-494/controle-energia/Planilha-energia-atual.xlsx'
+file_path = 'controle-agua-gas-energia/controle-494/controle-energia/planilhas/Planilha-energia-atual.xlsx'
 
 try:
     # --- Passo 1: Ler as linhas do cabeçalho separadamente ---
@@ -130,7 +130,7 @@ try:
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
     output_image_path_total = 'grafico_consumo_mensal_total_2025.png'
-    plt.savefig('controle-agua-gas-energia/controle-494/controle-energia/' + output_image_path_total)
+    plt.savefig('controle-agua-gas-energia/controle-494/controle-energia/graficos' + output_image_path_total)
     print(f"\nGráfico total salvo como: {output_image_path_total}")
     plt.show()
 
@@ -162,7 +162,7 @@ try:
 
             plt.tight_layout()
             output_image_path_setor = f'grafico_consumo_mensal_{setor_nome.replace(" ", "_")}_2025.png'
-            plt.savefig('controle-agua-gas-energia/controle-494/controle-energia/' + output_image_path_setor)
+            plt.savefig('controle-agua-gas-energia/controle-494/controle-energia/graficos' + output_image_path_setor)
             print(f"Gráfico do setor '{setor_nome}' salvo como: {output_image_path_setor}")
             plt.show()
         else:

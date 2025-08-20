@@ -4,13 +4,13 @@ import glob
 
 try:
     # 1. Carregar o arquivo de serviços
-    df_servicos = pd.read_csv('planilhas/Serviços-18-08-2025(SOLIC_SERVIÇO).csv', delimiter=';')
+    df_servicos = pd.read_csv('planilhas/csv/Serviços-18-08-2025(SOLIC_SERVIÇO).csv', delimiter=';')
 
     # 2. Ler e juntar todos os arquivos de usuários do RICARDOALMEIDA
 
     # Define o padrão de nome de arquivo para encontrar todos os arquivos dos usuários
     # (por exemplo, "RICARDOALMEIDA_*.csv")
-    padrao_arquivo = 'planilhas/RICARDOALMEIDA_1858_MANT ES_18*.csv'
+    padrao_arquivo = 'planilhas/csv/RICARDOALMEIDA*.csv'
 
     # Use glob para encontrar todos os arquivos que correspondem ao padrão na pasta
     arquivos_ricardo = glob.glob(padrao_arquivo)
@@ -43,6 +43,8 @@ try:
         df_ricardo_consolidado = df_ricardo_todos.groupby('Solicitação').agg(
             Empresa=('Empresa', 'first'),
             Data=('Data', 'first'),
+            Usuario=('Usuário', 'first'),
+            Nr_nf=('Nr. Nf', 'first'),
             Vl_Customedio_Total=('Vl. Customedio', 'sum')
         ).reset_index()
 
@@ -61,21 +63,24 @@ try:
         # 5. Selecionar e renomear as colunas para o resultado final.
         colunas_finais = [
             'Empresa',
+            'Filial',
             'Tipo',
             'Serviço',
             'Razão Social',
+            'Nr_nf',
             'NF',
             'Vl_Customedio_Total',
+            'Valor',
             'Solicitação',
             'Data',
             'Natureza da Solicitação',
-            'Usuário'
+            'Usuario'
         ]
 
         df_final = df_final[colunas_finais]
 
         # 6. Salvar o resultado em um novo arquivo CSV.
-        df_final.to_csv('Analise_Consolidada_Multiplos_Usuarios.csv', index=False, sep=';')
+        df_final.to_csv('planilhas/Analise_Consolidada_Multiplos_Usuarios.csv', index=False, sep=';')
 
         print("Processo concluído. O arquivo de saída contém todas as solicitações consolidadas.")
         print("O resultado foi salvo no arquivo 'Analise_Consolidada_Multiplos_Usuarios.csv'.")

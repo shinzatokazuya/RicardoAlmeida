@@ -37,6 +37,7 @@ try:
                     Usuario=('Usuário', 'first'),
                     Nr_nf=('Nr. Nf', 'first'),
                     Ds_Obs_Cmc=('Ds. Obs Cmc', 'first'),
+                    Descricao=('Descrição', 'first'),
                     Pedido=('Pedido', 'first'),
                     Data_Prev=('Dt. Preventrega', 'first'),
                     Ds_Compra=('Ds. Compra', 'first'),
@@ -47,8 +48,47 @@ try:
                 lista_dataframes.append(df_somadas)
                 df_somadas['Vl_Solicitacao_Total'] = df_somadas['Vl_Solicitacao_Total'].round(2)
                 #lista_dataframes.append(df_nao_somar)
-            elif 'RICARDOALMEIDA_1858_MANT ES_Geral_01-09-2025.csv' in arquivo:
+            elif 'RICARDOALMEIDA_1858_MANT ES_Geral_05-09-2025.csv' in arquivo:
                 # Soma todo o arquivo
+                df_somar = df_temp[df_temp['Solicitação'] <= 13354]
+                df_somadas = df_somar.groupby('Solicitação').agg(
+                    Empresa=('Empresa', 'first'),
+                    Data=('Data', 'first'),
+                    Situacao=('Situação', 'first'),
+                    Usuario=('Usuário', 'first'),
+                    Nr_nf=('Nr. Nf', 'first'),
+                    Ds_Obs_Cmc=('Ds. Obs Cmc', 'first'),
+                    Descricao=('Descrição', 'first'),
+                    Pedido=('Pedido', 'first'),
+                    Data_Prev=('Dt. Preventrega', 'first'),
+                    Ds_Compra=('Ds. Compra', 'first'),
+                    Prioridade=('Ds. Prioridade', 'first'),
+                    Vl_Solicitacao_Total=('Vl.Solicitação', 'sum')
+                ).reset_index()
+                lista_dataframes.append(df_somadas)
+                df_somadas['Vl_Solicitacao_Total'] = df_somadas['Vl_Solicitacao_Total'].round(2)
+            elif 'RICARDOALMEIDA_1858_MANT ES_Geral_12-09-2025.csv' in arquivo:
+                # Soma todo o arquivo
+                df_somar = df_temp[df_temp['Solicitação'] <= 13659]
+                df_somadas = df_somar.groupby('Solicitação').agg(
+                    Empresa=('Empresa', 'first'),
+                    Data=('Data', 'first'),
+                    Situacao=('Situação', 'first'),
+                    Usuario=('Usuário', 'first'),
+                    Nr_nf=('Nr. Nf', 'first'),
+                    Ds_Obs_Cmc=('Ds. Obs Cmc', 'first'),
+                    Descricao=('Descrição', 'first'),
+                    Pedido=('Pedido', 'first'),
+                    Data_Prev=('Dt. Preventrega', 'first'),
+                    Ds_Compra=('Ds. Compra', 'first'),
+                    Prioridade=('Ds. Prioridade', 'first'),
+                    Vl_Solicitacao_Total=('Vl.Solicitação', 'sum')
+                ).reset_index()
+                lista_dataframes.append(df_somadas)
+                df_somadas['Vl_Solicitacao_Total'] = df_somadas['Vl_Solicitacao_Total'].round(2)
+            elif 'RICARDOALMEIDA_1858_MANT ES_Geral_19-09-2025.csv' in arquivo:
+                # Soma todo o arquivo
+                # df_somar = df_temp[df_temp['Solicitação'] <= 13659]
                 df_somadas = df_temp.groupby('Solicitação').agg(
                     Empresa=('Empresa', 'first'),
                     Data=('Data', 'first'),
@@ -56,6 +96,7 @@ try:
                     Usuario=('Usuário', 'first'),
                     Nr_nf=('Nr. Nf', 'first'),
                     Ds_Obs_Cmc=('Ds. Obs Cmc', 'first'),
+                    Descricao=('Descrição', 'first'),
                     Pedido=('Pedido', 'first'),
                     Data_Prev=('Dt. Preventrega', 'first'),
                     Ds_Compra=('Ds. Compra', 'first'),
@@ -84,6 +125,8 @@ try:
             'ID_Prestador',
             'Nr_nf',
             'Ds_Obs_Cmc',
+            'Obs',
+            'Descricao',
             'Vl_Solicitacao_Total',
             'Solicitação',
             'Pedido',
@@ -96,8 +139,8 @@ try:
             'Situacao'
         ]
         df_final = df_final[colunas_finais]
-        df_final.to_csv('planilhas/Solicitacoes_Geral_01-09-2025.csv', index=False, sep=';')
-        print("Processo concluído. O resultado foi salvo no arquivo 'Solicitacoes_Geral_01-09-2025.csv'.")
+        df_final.to_csv('planilhas/Solicitacoes_Geral_19-09-2025.csv', index=False, sep=';')
+        print("Processo concluído. O resultado foi salvo no arquivo 'Solicitacoes_Geral_19-09-2025.csv'.")
 
 except FileNotFoundError:
     print("Erro: Verifique se os nomes dos arquivos e o padrão de busca estão corretos.")

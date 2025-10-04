@@ -1,4 +1,4 @@
-ID_Filial;Tipo;Servico;ID_Prestador;NF;Observacao;Valor;Solicitação;nr_Pedido;Status_Compra;Data_Solicitacao;Data_Entrega;Natureza da Solicitacao;Usuarios;Status_Solicitacao
+ID_Filial;Tipo;Servico;ID_Prestador;NF;Observacao;Valor;Solicitação;nr_Pedido;Status_Compra;Data_Solicitacao;Data_Entrega;Natureza da Solicitacao;Usuarios;Status_Solicitacao;
 1;AQUISICAO;MATERIAIS;309770;94330;;31235,09;520;12255;;31/08/2022;09/09/2022;COMPRA;1851;APROVADA
 1;AQUISICAO;MATERIAIS;324474;51818;;748,5;522;12256;;31/08/2022;09/09/2022;COMPRA;1851;APROVADA
 1;AQUISICAO;MATERIAIS;309770;;;517;524;;;01/09/2022;;COMPRA;1851;APROVADA

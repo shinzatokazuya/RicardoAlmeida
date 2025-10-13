@@ -2,8 +2,8 @@ import pandas as pd
 import glob
 
 try:
-    df_servicos = pd.read_csv('planilhas/csv/Solicitacoes_Geral_26-09-2025.csv', delimiter=';', encoding='utf-8')
-    padrao_arquivo = 'planilhas/csv/RICARDOALMEIDA*.csv'
+    df_servicos = pd.read_csv('planilhas/Solicitacoes_Geral_03-10-2025.csv', delimiter=';', encoding='utf-8')
+    padrao_arquivo = 'planilhas/csv/*/RICARDOALMEIDA*.csv'
     arquivos_ricardo = glob.glob(padrao_arquivo)
 
     if not arquivos_ricardo:
@@ -39,7 +39,8 @@ try:
                 Data_Prev=('Dt. Preventrega', 'first'),
                 Ds_Compra=('Ds. Compra', 'first'),
                 Prioridade=('Ds. Prioridade', 'first'),
-                Vl_Solicitacao_Total=('Vl.Solicitação', 'sum')
+                Vl_Solicitacao_Total=('Vl.Solicitação', 'sum'),
+                Centro_Custo=('Cod. Ccusto', 'first')
             ).reset_index()
 
             df_somadas['Vl_Solicitacao_Total'] = df_somadas['Vl_Solicitacao_Total'].round(2)
@@ -62,11 +63,12 @@ try:
             'Nr_nf', 'Ds_Obs_Cmc', 'Obs', 'Descricao',
             'Vl_Solicitacao_Total', 'Solicitação', 'Pedido',
             'Ds_Compra', 'Prioridade', 'Data', 'Data_Prev',
-            'Natureza da Solicitacao', 'Usuario', 'Situacao'
+            'Natureza da Solicitacao', 'Usuario', 'Situacao',
+            'Centro_Custo'
         ]
         df_final = df_final[colunas_finais]
 
-        df_final.to_csv('planilhas/Solicitacoes_Geral_03-10-2025.csv', index=False, sep=';', encoding='utf-8')
+        df_final.to_csv('planilhas/Solicitacoes_Geral_03-10-2025_teste.csv', index=False, sep=';', encoding='utf-8')
         print("Processo concluído. O resultado foi salvo no arquivo 'Solicitacoes_Geral_03-10-2025.csv'.")
 
 except FileNotFoundError:

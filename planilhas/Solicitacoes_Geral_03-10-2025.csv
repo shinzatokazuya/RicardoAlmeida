@@ -1,4 +1,4 @@
-Empresa;Tipo;Servico;ID_Prestador;Nr_nf;Ds_Obs_Cmc;Obs;Descricao;Vl_Solicitacao_Total;Solicitação;Pedido;Ds_Compra;Prioridade;Data;Data_Prev;Natureza da Solicitacao;Usuario;Situacao
+ID_Filial;Tipo;Servico;ID_Prestador;NF;Observação;Obs;Desc;Valor;Solicitação;nr_Pedido;Status_compra;Status_Prioridade;Data_solicitacao;Data_entrega;Natureza da Solicitacao;Usuarios;Status_solicitacao
 1.0;AQUISICAO;MATERIAIS;309770;94330.0;;;ACUCAR REFINADO 1KG UNICA U;31235.09;520.0;12255.0;;ALTA;31/08/2022;09/09/2022;COMPRA;1851.0;APROVADA
 1.0;AQUISICAO;MATERIAIS;324474;51818.0;;;PALITOS PARA SORVETE 1000 UNIDADES UNICA U;748.5;522.0;12256.0;;ALTA;31/08/2022;09/09/2022;COMPRA;1851.0;APROVADA
 1.0;AQUISICAO;MATERIAIS;309770;;;;SUCO DE LARANJA 200ML UNICA U;517.0;524.0;;;ALTA;01/09/2022;;COMPRA;1851.0;APROVADA

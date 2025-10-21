@@ -1,148 +1,248 @@
 import pandas as pd
-import os
 import glob
+import os
+from datetime import datetime
 
-try:
-    df_servicos = pd.read_csv('planilhas/csv/Solicitacoes_Geral_28-08-2025.csv', delimiter=';')
-    padrao_arquivo = 'planilhas/csv/RICARDOALMEIDA*.csv'
-    arquivos_ricardo = glob.glob(padrao_arquivo)
+def processar_arquivo_individual(arquivo):
+    """
+    Processa um único arquivo CSV, agrupando solicitações duplicadas
+    e somando seus valores.
 
-    if not arquivos_ricardo:
-        print(f"Erro: Nenhum arquivo encontrado com o padrão '{padrao_arquivo}'.")
-    else:
-        print(f"Arquivos encontrados: {arquivos_ricardo}")
+    Este é o primeiro filtro: elimina duplicatas DENTRO do mesmo arquivo.
+    """
+    try:
+        print(f"\n  → Lendo: {os.path.basename(arquivo)}")
+
+        # Lê o arquivo com as configurações corretas
+        df = pd.read_csv(arquivo, delimiter=';', encoding='utf-8')
+
+        # Normaliza o número da solicitação para garantir que seja numérico
+        df['Solicitação'] = pd.to_numeric(df['Solicitação'], errors='coerce')
+
+        # Normaliza o valor da solicitação
+        # Importante: valores brasileiros vêm como "1.234,56" e precisam virar 1234.56
+        df['Vl.Solicitação'] = (
+            df['Vl.Solicitação']
+            .astype(str)
+            .str.replace('.', '', regex=False)  # Remove separador de milhar
+            .str.replace(',', '.', regex=False)  # Vírgula decimal vira ponto
+            .str.strip()
+        )
+        df['Vl.Solicitação'] = pd.to_numeric(df['Vl.Solicitação'], errors='coerce')
+
+        # Remove linhas inválidas
+        df_limpo = df.dropna(subset=['Solicitação'])
+
+        # Agrupa por solicitação, somando os valores duplicados
+        # Cada solicitação pode ter múltiplos itens, então somamos os valores
+        # mas mantemos apenas o primeiro registro das outras informações
+        df_agrupado = df_limpo.groupby('Solicitação').agg(
+            Empresa=('Empresa', 'first'),
+            Data=('Data', 'first'),
+            Situacao=('Situação', 'first'),
+            Usuario=('Usuário', 'first'),
+            Nr_nf=('Nr. Nf', 'first'),
+            Sku=('Sku', 'first'),
+            Dt_Preventrega=('Dt. Preventrega', 'first'),
+            Pedido=('Pedido', 'first'),
+            Ds_Prioridade=('Ds. Prioridade', 'first'),
+            Ds_Compra=('Ds. Compra', 'first'),
+            Vl_Solicitacao_Total=('Vl.Solicitação', 'sum'),
+            Cod_Ccusto=('Cod. Ccusto', 'first'),
+            Obs_lin1=('Obs lin1', 'first'),
+            Obs_lin2=('Obs lin2', 'first'),
+            Obs_lin3=('Obs lin3', 'first'),
+            Obs_lin4=('Obs lin4', 'first')
+        ).reset_index()
+
+        # Arredonda para 2 casas decimais
+        df_agrupado['Vl_Solicitacao_Total'] = df_agrupado['Vl_Solicitacao_Total'].round(2)
+
+        print(f"     ✓ {len(df)} linhas → {len(df_agrupado)} solicitações únicas")
+
+        return df_agrupado
+
+    except Exception as e:
+        print(f"     ✗ Erro ao processar {arquivo}: {e}")
+        return None
+
+
+def consolidar_multiplos_arquivos(padrao_arquivos, arquivo_saida):
+    """
+    Consolida múltiplos arquivos CSV em uma única base, eliminando duplicatas
+    entre arquivos (isso resolve o problema de datas sobrepostas).
+
+    Este é o segundo filtro: elimina duplicatas ENTRE arquivos diferentes.
+    Quando a mesma solicitação aparecer em múltiplos arquivos, mantemos
+    apenas a versão mais recente (a do último arquivo processado).
+    """
+    try:
+        # Busca todos os arquivos que correspondem ao padrão
+        arquivos = glob.glob(padrao_arquivos)
+
+        if not arquivos:
+            print(f"Erro: Nenhum arquivo encontrado com o padrão '{padrao_arquivos}'")
+            return None
+
+        # Ordena os arquivos por nome (assumindo que têm data no nome)
+        # Isso garante que processamos do mais antigo para o mais recente
+        arquivos.sort()
+
+        print(f"\n{'='*60}")
+        print(f"CONSOLIDANDO {len(arquivos)} ARQUIVO(S)")
+        print(f"{'='*60}")
+
         lista_dataframes = []
 
-        for arquivo in arquivos_ricardo:
-            print(f"Lendo o arquivo: {arquivo}")
-            df_temp = pd.read_csv(arquivo, delimiter=';')
-            df_temp['Solicitação'] = pd.to_numeric(df_temp['Solicitação'], errors='coerce')
-            df_temp['Vl.Solicitação'] = (
-                df_temp['Vl.Solicitação']
-                .astype(str)
-                .str.replace(',', '.', regex=False)
-                .str.strip()
-            )
-            df_temp['Vl.Solicitação'] = pd.to_numeric(df_temp['Vl.Solicitação'], errors='coerce')
+        # Processa cada arquivo individualmente
+        for arquivo in arquivos:
+            df_processado = processar_arquivo_individual(arquivo)
+            if df_processado is not None:
+                lista_dataframes.append(df_processado)
 
-            if 'RICARDOALMEIDA_1858_MANT ES_Geral_28-08-2025.csv' in arquivo:
-                # Somar apenas até a solicitação 13229
-                df_somar = df_temp[df_temp['Solicitação'] <= 13229]
-                #df_nao_somar = df_temp[df_temp['Solicitação'] > 13229]
-                # Agrupa e soma até 13229
-                df_somadas = df_somar.groupby('Solicitação').agg(
-                    Empresa=('Empresa', 'first'),
-                    Data=('Data', 'first'),
-                    Situacao=('Situação', 'first'),
-                    Usuario=('Usuário', 'first'),
-                    Nr_nf=('Nr. Nf', 'first'),
-                    Ds_Obs_Cmc=('Ds. Obs Cmc', 'first'),
-                    Descricao=('Descrição', 'first'),
-                    Pedido=('Pedido', 'first'),
-                    Data_Prev=('Dt. Preventrega', 'first'),
-                    Ds_Compra=('Ds. Compra', 'first'),
-                    Prioridade=('Ds. Prioridade', 'first'),
-                    Vl_Solicitacao_Total=('Vl.Solicitação', 'sum')
-                ).reset_index()
-                # Junta as linhas não somadas
-                lista_dataframes.append(df_somadas)
-                df_somadas['Vl_Solicitacao_Total'] = df_somadas['Vl_Solicitacao_Total'].round(2)
-                #lista_dataframes.append(df_nao_somar)
-            elif 'RICARDOALMEIDA_1858_MANT ES_Geral_05-09-2025.csv' in arquivo:
-                # Soma todo o arquivo
-                df_somar = df_temp[df_temp['Solicitação'] <= 13354]
-                df_somadas = df_somar.groupby('Solicitação').agg(
-                    Empresa=('Empresa', 'first'),
-                    Data=('Data', 'first'),
-                    Situacao=('Situação', 'first'),
-                    Usuario=('Usuário', 'first'),
-                    Nr_nf=('Nr. Nf', 'first'),
-                    Ds_Obs_Cmc=('Ds. Obs Cmc', 'first'),
-                    Descricao=('Descrição', 'first'),
-                    Pedido=('Pedido', 'first'),
-                    Data_Prev=('Dt. Preventrega', 'first'),
-                    Ds_Compra=('Ds. Compra', 'first'),
-                    Prioridade=('Ds. Prioridade', 'first'),
-                    Vl_Solicitacao_Total=('Vl.Solicitação', 'sum')
-                ).reset_index()
-                lista_dataframes.append(df_somadas)
-                df_somadas['Vl_Solicitacao_Total'] = df_somadas['Vl_Solicitacao_Total'].round(2)
-            elif 'RICARDOALMEIDA_1858_MANT ES_Geral_12-09-2025.csv' in arquivo:
-                # Soma todo o arquivo
-                df_somar = df_temp[df_temp['Solicitação'] <= 13659]
-                df_somadas = df_somar.groupby('Solicitação').agg(
-                    Empresa=('Empresa', 'first'),
-                    Data=('Data', 'first'),
-                    Situacao=('Situação', 'first'),
-                    Usuario=('Usuário', 'first'),
-                    Nr_nf=('Nr. Nf', 'first'),
-                    Ds_Obs_Cmc=('Ds. Obs Cmc', 'first'),
-                    Descricao=('Descrição', 'first'),
-                    Pedido=('Pedido', 'first'),
-                    Data_Prev=('Dt. Preventrega', 'first'),
-                    Ds_Compra=('Ds. Compra', 'first'),
-                    Prioridade=('Ds. Prioridade', 'first'),
-                    Vl_Solicitacao_Total=('Vl.Solicitação', 'sum')
-                ).reset_index()
-                lista_dataframes.append(df_somadas)
-                df_somadas['Vl_Solicitacao_Total'] = df_somadas['Vl_Solicitacao_Total'].round(2)
-            elif 'RICARDOALMEIDA_1858_MANT ES_Geral_19-09-2025.csv' in arquivo:
-                # Soma todo o arquivo
-                # df_somar = df_temp[df_temp['Solicitação'] <= 13659]
-                df_somadas = df_temp.groupby('Solicitação').agg(
-                    Empresa=('Empresa', 'first'),
-                    Data=('Data', 'first'),
-                    Situacao=('Situação', 'first'),
-                    Usuario=('Usuário', 'first'),
-                    Nr_nf=('Nr. Nf', 'first'),
-                    Ds_Obs_Cmc=('Ds. Obs Cmc', 'first'),
-                    Descricao=('Descrição', 'first'),
-                    Pedido=('Pedido', 'first'),
-                    Data_Prev=('Dt. Preventrega', 'first'),
-                    Ds_Compra=('Ds. Compra', 'first'),
-                    Prioridade=('Ds. Prioridade', 'first'),
-                    Vl_Solicitacao_Total=('Vl.Solicitação', 'sum')
-                ).reset_index()
-                lista_dataframes.append(df_somadas)
-                df_somadas['Vl_Solicitacao_Total'] = df_somadas['Vl_Solicitacao_Total'].round(2)
-            else:
-                # Para outros arquivos, apenas adiciona sem agrupar
-                lista_dataframes.append(df_temp)
+        if not lista_dataframes:
+            print("Erro: Nenhum arquivo foi processado com sucesso")
+            return None
 
-        df_ricardo_todos = pd.concat(lista_dataframes, ignore_index=True)
+        print(f"\n{'='*60}")
+        print("ELIMINANDO DUPLICATAS ENTRE ARQUIVOS")
+        print(f"{'='*60}")
 
-        # Merge e seleção de colunas igual ao seu código original
-        df_final = pd.merge(df_ricardo_todos, df_servicos,
-                            left_on='Solicitação',
-                            right_on='Solicitação',
-                            how='outer',
-                            suffixes=('_ricardo', '_servicos'))
+        # Junta todos os dataframes em um só
+        df_completo = pd.concat(lista_dataframes, ignore_index=True)
+        print(f"  Total de linhas antes de remover duplicatas: {len(df_completo)}")
 
-        colunas_finais = [
-            'Empresa',
-            'Tipo',
-            'Servico',
-            'ID_Prestador',
-            'Nr_nf',
-            'Ds_Obs_Cmc',
-            'Obs',
-            'Descricao',
-            'Vl_Solicitacao_Total',
-            'Solicitação',
-            'Pedido',
-            'Ds_Compra',
-            'Prioridade',
-            'Data',
-            'Data_Prev',
-            'Natureza da Solicitacao',
-            'Usuario',
-            'Situacao'
+        # Remove duplicatas mantendo a última ocorrência
+        # Isso é crucial: se a solicitação 12345 aparece no arquivo de 20/10
+        # e também no arquivo de 27/10, mantemos a do arquivo de 27/10 (mais recente)
+        df_final = df_completo.drop_duplicates(subset=['Solicitação'], keep='last')
+        print(f"  Total de linhas após remover duplicatas: {len(df_final)}")
+        print(f"  → Foram eliminadas {len(df_completo) - len(df_final)} solicitações duplicadas")
+
+        # Ordena por número de solicitação para facilitar consultas futuras
+        df_final = df_final.sort_values('Solicitação').reset_index(drop=True)
+
+        # Reordena as colunas
+        colunas_ordenadas = [
+            'Empresa', 'Data', 'Situacao', 'Usuario', 'Solicitação',
+            'Nr_nf', 'Sku', 'Dt_Preventrega', 'Pedido', 'Ds_Prioridade',
+            'Ds_Compra', 'Vl_Solicitacao_Total', 'Cod_Ccusto',
+            'Obs_lin1', 'Obs_lin2', 'Obs_lin3', 'Obs_lin4'
         ]
-        df_final = df_final[colunas_finais]
-        df_final.to_csv('planilhas/Solicitacoes_Geral_19-09-2025.csv', index=False, sep=';')
-        print("Processo concluído. O resultado foi salvo no arquivo 'Solicitacoes_Geral_19-09-2025.csv'.")
+        df_final = df_final[colunas_ordenadas]
 
-except FileNotFoundError:
-    print("Erro: Verifique se os nomes dos arquivos e o padrão de busca estão corretos.")
-except Exception as e:
-    print(f"Ocorreu um erro: {e}")
+        # Salva o resultado
+        df_final.to_csv(arquivo_saida, index=False, sep=';', encoding='utf-8')
+
+        print(f"\n{'='*60}")
+        print(f"ARQUIVO FINAL SALVO: {arquivo_saida}")
+        print(f"Total de solicitações únicas: {len(df_final)}")
+        print(f"{'='*60}\n")
+
+        return df_final
+
+    except Exception as e:
+        print(f"Erro ao consolidar arquivos: {e}")
+        return None
+
+
+def adicionar_novos_dados_semanais(arquivo_base, padrao_novos_arquivos, arquivo_saida):
+    """
+    Adiciona novos dados semanais a uma base existente.
+
+    Use esta função quando você já tem uma base consolidada e quer adicionar
+    dados da semana seguinte. A função garante que não haverá duplicatas
+    mesmo se houver sobreposição de datas.
+    """
+    try:
+        print(f"\n{'='*60}")
+        print("ATUALIZANDO BASE EXISTENTE COM NOVOS DADOS")
+        print(f"{'='*60}")
+
+        # Lê a base existente
+        print(f"\n  → Carregando base existente: {arquivo_base}")
+        df_base = pd.read_csv(arquivo_base, delimiter=';', encoding='utf-8')
+        print(f"     ✓ Base tem {len(df_base)} solicitações")
+
+        # Processa os novos arquivos
+        arquivos_novos = glob.glob(padrao_novos_arquivos)
+
+        if not arquivos_novos:
+            print(f"Erro: Nenhum arquivo novo encontrado com o padrão '{padrao_novos_arquivos}'")
+            return None
+
+        arquivos_novos.sort()
+        print(f"\n  → Processando {len(arquivos_novos)} arquivo(s) novo(s)")
+
+        lista_novos = []
+        for arquivo in arquivos_novos:
+            df_processado = processar_arquivo_individual(arquivo)
+            if df_processado is not None:
+                lista_novos.append(df_processado)
+
+        if not lista_novos:
+            print("Erro: Nenhum arquivo novo foi processado com sucesso")
+            return None
+
+        # Consolida os novos arquivos (elimina duplicatas entre eles)
+        df_novos = pd.concat(lista_novos, ignore_index=True)
+        df_novos = df_novos.drop_duplicates(subset=['Solicitação'], keep='last')
+        print(f"     ✓ Total de solicitações novas/atualizadas: {len(df_novos)}")
+
+        # Junta base antiga com dados novos
+        df_completo = pd.concat([df_base, df_novos], ignore_index=True)
+
+        # Remove duplicatas mantendo sempre a versão mais recente (keep='last')
+        # Isso garante que se uma solicitação já existia, ela será atualizada
+        df_final = df_completo.drop_duplicates(subset=['Solicitação'], keep='last')
+
+        print(f"\n  → Base anterior: {len(df_base)} solicitações")
+        print(f"  → Dados novos: {len(df_novos)} solicitações")
+        print(f"  → Base final: {len(df_final)} solicitações")
+        print(f"  → Novas solicitações adicionadas: {len(df_final) - len(df_base)}")
+
+        # Ordena e salva
+        df_final = df_final.sort_values('Solicitação').reset_index(drop=True)
+        df_final.to_csv(arquivo_saida, index=False, sep=';', encoding='utf-8')
+
+        print(f"\n{'='*60}")
+        print(f"BASE ATUALIZADA SALVA: {arquivo_saida}")
+        print(f"{'='*60}\n")
+
+        return df_final
+
+    except Exception as e:
+        print(f"Erro ao adicionar novos dados: {e}")
+        return None
+
+
+# ==================== EXEMPLOS DE USO ====================
+
+# CENÁRIO 1: Primeira vez - processar múltiplos arquivos históricos
+# Use quando estiver começando e tiver vários arquivos para consolidar
+print("\n" + "🔷" * 30)
+print("CENÁRIO 1: CONSOLIDAÇÃO INICIAL")
+print("🔷" * 30)
+
+# Exemplo: você tem arquivos de diferentes semanas na pasta planilhas/csv/
+# Todos seguem o padrão RICARDOALMEIDA*.csv
+resultado = consolidar_multiplos_arquivos(
+    padrao_arquivos='planilhas/csv/RICARDOALMEIDA*.csv',
+    arquivo_saida='planilhas/csv/relatorio_ate_20-10-2025.csv'
+)
+
+# CENÁRIO 2: Atualizações semanais
+# Use quando já tiver uma base consolidada e quiser adicionar dados da nova semana
+print("\n" + "🔶" * 30)
+print("CENÁRIO 2: ATUALIZAÇÃO SEMANAL (EXEMPLO)")
+print("🔶" * 30)
+print("(Este exemplo está comentado - descomente quando for usar)\n")
+
+"""
+# Descomente as linhas abaixo quando for fazer a atualização semanal
+resultado_atualizado = adicionar_novos_dados_semanais(
+    arquivo_base='planilhas/base_consolidada.csv',
+    padrao_novos_arquivos='planilhas/csv/novos/RICARDOALMEIDA*.csv',
+    arquivo_saida='planilhas/base_consolidada_atualizada.csv'
+)
+"""

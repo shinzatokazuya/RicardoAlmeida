@@ -2,7 +2,7 @@ import pandas as pd
 import glob
 
 try:
-    df_servicos = pd.read_csv('planilhas/Solicitacoes_Geral_03-10-2025.csv', delimiter=';', encoding='utf-8')
+    df_servicos = pd.read_csv('planilhas/RICARDOALMEIDA_1858_MANT ES_geral_utf8_20-10-2025.csv', delimiter=';', encoding='utf-8')
     padrao_arquivo = 'planilhas/csv/*/RICARDOALMEIDA*.csv'
     arquivos_ricardo = glob.glob(padrao_arquivo)
 

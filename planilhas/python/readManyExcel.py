@@ -223,26 +223,23 @@ def adicionar_novos_dados_semanais(arquivo_base, padrao_novos_arquivos, arquivo_
 print("\n" + "🔷" * 30)
 print("CENÁRIO 1: CONSOLIDAÇÃO INICIAL")
 print("🔷" * 30)
-
+"""
 # Exemplo: você tem arquivos de diferentes semanas na pasta planilhas/csv/
 # Todos seguem o padrão RICARDOALMEIDA*.csv
 resultado = consolidar_multiplos_arquivos(
-    padrao_arquivos='planilhas/csv/RICARDOALMEIDA*.csv',
-    arquivo_saida='planilhas/csv/relatorio_ate_20-10-2025.csv'
+    padrao_arquivos='planilhas/csv/planilhas_semanais/*/RICARDOALMEIDA*.csv',
+    arquivo_saida='planilhas/csv/planilhas_relatorios/relatorio_ate_27-10-2025.csv'
 )
-
+"""
 # CENÁRIO 2: Atualizações semanais
-# Use quando já tiver uma base consolidada e quiser adicionar dados da nova semana
 print("\n" + "🔶" * 30)
 print("CENÁRIO 2: ATUALIZAÇÃO SEMANAL (EXEMPLO)")
 print("🔶" * 30)
-print("(Este exemplo está comentado - descomente quando for usar)\n")
 
-"""
-# Descomente as linhas abaixo quando for fazer a atualização semanal
+# Atualização semanal
 resultado_atualizado = adicionar_novos_dados_semanais(
-    arquivo_base='planilhas/base_consolidada.csv',
-    padrao_novos_arquivos='planilhas/csv/novos/RICARDOALMEIDA*.csv',
-    arquivo_saida='planilhas/base_consolidada_atualizada.csv'
+    arquivo_base='planilhas/csv/planilha_geral/planilha_geral_ate_20-10-2025.csv',
+    padrao_novos_arquivos='planilhas/csv/planilhas_semanais/*/RICARDOALMEIDA*.csv',
+    arquivo_saida='planilhas/csv/planilhas_relatorios/relatorio_ate_27-10-2025.csv'
 )
-"""
+
